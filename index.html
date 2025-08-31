@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Система учёта</title>
+  <title>Accounting System</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     /* Основные стили */
@@ -27,6 +27,9 @@
       background: #34495e;
       border-bottom: 4px solid #1abc9c;
       padding: 10px 0;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
     }
     .tabs button {
       padding: 15px 40px;
@@ -226,7 +229,6 @@
       }
     }
 
-    
     @media (max-width: 700px) {
       .tabs {
         flex-wrap: wrap;
@@ -243,75 +245,84 @@
       overflow-x: auto;
     }
     table {
-      min-width: 600px;
+      width: 100%;
+      border-collapse: collapse;
     }
+
+    @media (min-width: 700px) {
+      table {
+        min-width: 600px;
+      }
+    }
+
   </style>
 </head>
 <body>
-  <h1>Система учёта</h1>
+  <h1>Accounting System</h1>
   <div class="tabs">
-  <button class="tab-btn active" onclick="switchTab('accounting')">Учёт</button>
-  <button class="tab-btn" onclick="switchTab('rental')">Аренда</button>
-  <button class="tab-btn" onclick="switchTab('warehouse')">Склад</button>
+    <button class="tab-btn active" data-tab="accounting">Accounting</button>
+    <button class="tab-btn" data-tab="rental">Rental</button>
+    <button class="tab-btn" data-tab="warehouse">Warehouse</button>
   </div>
 
   <!-- Tab: Accounting -->
   <div id="accounting" class="tab-content active">
     <div class="container">
-  <h2>Учёт доходов и расходов</h2>
+  <h2>Income and Expense Accounting</h2>
       <form id="entryForm">
         <div class="inline-group">
-          <label>Тип:
+          <label>Type:
             <select id="type">
-              <option>Продажа</option>
-              <option>Аренда</option>
-              <option>Ремонт</option>
+              <option value="Sale">Sale</option>
+              <option value="Rental">Rental</option>
+              <option value="Repair">Repair</option>
             </select>
           </label>
-          <label>Доход/Расход:
+          <label>Income/Expense:
             <select id="flow">
-              <option value="income">Доход</option>
-              <option value="expense">Расход</option>
+              <option value="income">Income</option>
+              <option value="expense">Expense</option>
             </select>
           </label>
         </div>
-        <label>Дата операции:
+        <label>Transaction Date:
           <input type="date" id="entryDate" required>
         </label>
         <!-- For sales, user specifies the part name with size in the format "Part (Size)" -->
-        <label>Название:
-          <input type="text" id="name" placeholder="Например: Товар A (13)" required>
+        <label>Name:
+          <input type="text" id="name" placeholder="For example: Product A (13)" required>
         </label>
-        <label>Количество:
+        <label>Quantity:
           <input type="number" id="quantity" min="1" value="1">
         </label>
-        <label>Сумма:
+        <label>Amount:
           <input type="number" id="amount" required>
         </label>
-        <button type="submit">Добавить операцию</button>
+        <button type="submit">Add Transaction</button>
       </form>
 
       <!-- Income calculation blocks -->
       <div id="incomeCalcDay" class="income-calc-block">
-        <h3>Доход за выбранный день</h3>
+        <h3>Income for Selected Day</h3>
         <select id="filterDay"></select>
-        <button id="calcIncomeDayBtn" style="margin-top: 10px;">Рассчитать</button>
-        <p>Доход за день: <span id="incomeDayResult">0</span></p>
+        <button id="calcIncomeDayBtn" style="margin-top: 10px;">Calculate</button>
+        <p>Income for the day: <span id="incomeDayResult">0</span></p>
       </div>
       <div id="incomeCalcMonth" class="income-calc-block">
-        <h3>Доход за выбранный месяц</h3>
+        <h3>Income for Selected Month</h3>
         <select id="filterMonth"></select>
-        <button id="calcIncomeMonthBtn" style="margin-top: 10px;">Рассчитать</button>
-        <p>Доход за месяц: <span id="incomeMonthResult">0</span></p>
+        <button id="calcIncomeMonthBtn" style="margin-top: 10px;">Calculate</button>
+        <p>Income for the month: <span id="incomeMonthResult">0</span></p>
       </div>
       <div id="incomeCalcYear" class="income-calc-block">
-        <h3>Доход за выбранный год</h3>
+        <h3>Income for Selected Year</h3>
         <select id="filterYear"></select>
-        <button id="calcIncomeYearBtn" style="margin-top: 10px;">Рассчитать</button>
-        <p>Доход за год: <span id="incomeYearResult">0</span></p>
+        <button id="calcIncomeYearBtn" style="margin-top: 10px;">Calculate</button>
+        <p>Income for the year: <span id="incomeYearResult">0</span></p>
       </div>
 
-            <div class="table-wrapper">
+      <!-- Table with entries -->
+      <div class="table-wrapper">
         <table>
           <thead>
             <tr>
@@ -333,46 +344,46 @@
   <!-- Tab: Rental -->
   <div id="rental" class="tab-content">
     <div class="container">
-  <h2>Аренда</h2>
+  <h2>Rental</h2>
       <form id="rentalForm">
-        <label>Имя:
+        <label>First Name:
           <input type="text" id="rentalName" required>
         </label>
-        <label>Фамилия:
+        <label>Last Name:
           <input type="text" id="rentalSurname" required>
         </label>
-        <label>Телефон:
+        <label>Phone:
           <input type="text" id="rentalPhone" required>
         </label>
-        <label>Серия паспорта:
+        <label>Passport Series:
           <input type="text" id="rentalPassport" required>
         </label>
-        <label>Дата рождения:
+        <label>Date of Birth:
           <input type="date" id="rentalBirth" required>
         </label>
-        <label>Дата выдачи:
+        <label>Date Given:
           <input type="date" id="rentalBikeGiven" required>
         </label>
-        <label>Срок аренды:
+        <label>Rental Period:
           <input type="number" id="rentalDuration" required>
           <select id="rentalUnit">
-            <option value="minutes">Минуты</option>
-            <option value="hours">Часы</option>
-            <option value="days">Дни</option>
-            <option value="months">Месяцы</option>
+            <option value="minutes">Minutes</option>
+            <option value="hours">Hours</option>
+            <option value="days">Days</option>
+            <option value="months">Months</option>
           </select>
         </label>
-        <label>Дата оплаты аренды:
+        <label>Rental Payment Date:
           <input type="date" id="rentalPaymentDate">
         </label>
-        <label>Сумма аренды:
+        <label>Rental Amount:
           <input type="number" id="rentalAmount" required>
         </label>
         <div class="checkbox-group">
-          <label><input type="checkbox" id="rentalPaid"> Оплата получена</label>
-          <label><input type="checkbox" id="rentalActive" checked> Аренда активна</label>
+          <label><input type="checkbox" id="rentalPaid"> Payment Received</label>
+          <label><input type="checkbox" id="rentalActive" checked> Rental Active</label>
         </div>
-        <button type="submit">Сохранить аренду</button>
+        <button type="submit">Save Rental</button>
       </form>
 
       <div class="table-wrapper">
@@ -401,27 +412,27 @@
   <!-- Tab: Warehouse -->
   <div id="warehouse" class="tab-content">
     <div class="container">
-  <h2>Склад</h2>
+  <h2>Warehouse</h2>
       <!-- Search block moved up -->
       <div class="search-box">
-        <label>Поиск:
-          <input type="text" id="searchInput" placeholder="Введите название...">
+        <label>Search:
+          <input type="text" id="searchInput" placeholder="Enter name...">
         </label>
       </div>
       <form id="stockForm">
-        <label>Название:
+        <label>Name:
           <input type="text" id="itemName" required>
         </label>
-        <label>Количество:
+        <label>Quantity:
           <input type="number" id="itemQty" required>
         </label>
-        <label>Размер:
+        <label>Size:
           <input type="text" id="itemSize">
         </label>
-        <label>Доп. информация:
+        <label>Additional Info:
           <input type="text" id="itemNote">
         </label>
-        <button type="submit">Добавить на склад</button>
+        <button type="submit">Add to Warehouse</button>
       </form>
 
       <div class="table-wrapper">
@@ -440,18 +451,45 @@
         </table>
       </div>
     </div>
-      </div>
-  
-     <!-- Скрипт для переключения вкладок -->
+  </div>
+
+
+  <script type="module">
+  import { Client, Databases } from "https://cdn.jsdelivr.net/npm/appwrite@13.0.0/+esm";
+
+  // 🔑 Replace with your values:
+  const PROJECT_ID   = "68b47642000e77647a56";    // from Settings → General
+  const DATABASE_ID  = "68b4777400163beca121";             // your database ID
+  const ACCOUNTING   = "accounting_entries"; // collection ID
+  const RENTALS      = "rentals";            // collection ID
+  const WAREHOUSE    = "warehouse";          // collection ID
+
+  // 🚀 Initialize Appwrite client
+  const client = new Client()
+    .setEndpoint("https://cloud.appwrite.io/v1")  // keep this unless you self-host
+    .setProject(PROJECT_ID);
+
+  // Database instance
+  const databases = new Databases(client);
+
+  // 👉 Make available globally so your other scripts can use them
+  window.APPWRITE = { databases, PROJECT_ID, DATABASE_ID, ACCOUNTING, RENTALS, WAREHOUSE };
+  </script>
+
+  <!-- Скрипт для переключения вкладок -->
   <script>
     const tabs = document.querySelectorAll('.tab-btn');
     const contents = document.querySelectorAll('.tab-content');
-    function switchTab(tabId) {
-      contents.forEach(c => c.classList.remove('active'));
-      tabs.forEach(t => t.classList.remove('active'));
-      document.getElementById(tabId).classList.add('active');
-      document.querySelector(`.tab-btn[onclick*="${tabId}"]`).classList.add('active');
-    }
+
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        const tabId = tab.getAttribute('data-tab');
+        contents.forEach(c => c.classList.remove('active'));
+        tabs.forEach(t => t.classList.remove('active'));
+        document.getElementById(tabId).classList.add('active');
+        tab.classList.add('active');
+      });
+    });
   </script>
 
   <!-- Функционал для Учёта доходов и расходов -->
@@ -489,9 +527,8 @@
       };
       accountingEntries.push(entry);
       localStorage.setItem('accountingEntries', JSON.stringify(accountingEntries));
-      
-      // Если тип "Продажа", пробуем списать с склада с учётом названия и размера
-      if (entry.type === "Продажа") {
+      // If type is "Sale", try to deduct from warehouse by name and size
+      if (entry.type === "Sale") {
         const parsed = parseSaleName(entry.name);
         if (parsed) {
           for (let i = 0; i < stockItems.length; i++) {
@@ -502,7 +539,7 @@
             }
           }
         } else {
-          // Если формат не соответствует – пробуем найти по полному названию
+          // If format does not match, try to find by full name
           for (let i = 0; i < stockItems.length; i++) {
             if (stockItems[i].name.toLowerCase() === entry.name.toLowerCase()) {
               stockItems[i].qty = Math.max(0, stockItems[i].qty - entry.quantity);
@@ -710,7 +747,7 @@
           <td>${item.phone}</td>
           <td>${item.passport}</td>
           <td>${item.bikeGiven}</td>
-          <td>${item.duration} ${translateUnit(item.durationUnit)}</td>
+          <td>${item.duration} ${item.durationUnit}</td>
           <td>${item.rentalAmount ? item.rentalAmount : 0}</td>
           <td>${item.paymentDate ? item.paymentDate : ''}</td>
           <td><input type="checkbox" onchange="toggleRentalPaid(${index}, this)" ${item.paid ? 'checked' : ''}></td>
@@ -719,24 +756,6 @@
         `;
         rentalTableBody.appendChild(row);
       });
-    }
-    function translateUnit(unit) {
-      switch (unit) {
-        case 'minutes':
-        case 'Минуты':
-          return 'Минуты';
-        case 'hours':
-        case 'Часы':
-          return 'Часы';
-        case 'days':
-        case 'Дни':
-          return 'Дни';
-        case 'months':
-        case 'Месяцы':
-          return 'Месяцы';
-        default:
-          return unit || '';
-      }
     }
     function deleteRental(index) {
       if (confirm("Удалить запись?")) {
