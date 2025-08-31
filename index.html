@@ -494,9 +494,10 @@
 
   <!-- Функционал для Учёта доходов и расходов -->
   <script>
-    let accountingEntries = JSON.parse(localStorage.getItem('accountingEntries')) || [];
+    let accountingEntries = [];
     const entryForm = document.getElementById('entryForm');
     const entryTable = document.getElementById('entryTable');
+    // Use window.APPWRITE.databases, window.APPWRITE.DATABASE_ID, window.APPWRITE.ACCOUNTING directly below
 
     // Установка текущей даты по умолчанию для поля "Дата операции"
     document.addEventListener("DOMContentLoaded", function() {
@@ -525,8 +526,6 @@
         quantity: parseInt(document.getElementById('quantity').value),
         amount: parseFloat(document.getElementById('amount').value)
       };
-      accountingEntries.push(entry);
-      localStorage.setItem('accountingEntries', JSON.stringify(accountingEntries));
       // If type is "Sale", try to deduct from warehouse by name and size
       if (entry.type === "Sale") {
         const parsed = parseSaleName(entry.name);
@@ -547,14 +546,14 @@
             }
           }
         }
-        localStorage.setItem('stockItems', JSON.stringify(stockItems));
+        // Persisting stockItems to WAREHOUSE collection would go here if needed
         renderStock();
       }
-      
-      entryForm.reset();
-      document.getElementById('entryDate').value = new Date().toISOString().substr(0, 10);
-      renderAccounting();
-      populateDateFilters();
+      window.APPWRITE.databases.createDocument(window.APPWRITE.DATABASE_ID, window.APPWRITE.ACCOUNTING, 'unique()', entry).then(() => {
+        loadAccounting();
+        entryForm.reset();
+        document.getElementById('entryDate').value = new Date().toISOString().substr(0, 10);
+      });
     });
 
     function renderAccounting() {
@@ -575,13 +574,20 @@
     }
     function deleteAccounting(index) {
       if (confirm("Удалить запись?")) {
-        accountingEntries.splice(index, 1);
-        localStorage.setItem('accountingEntries', JSON.stringify(accountingEntries));
-        renderAccounting();
-        populateDateFilters();
+        const id = accountingEntries[index].$id;
+        window.APPWRITE.databases.deleteDocument(window.APPWRITE.DATABASE_ID, window.APPWRITE.ACCOUNTING, id).then(() => {
+          loadAccounting();
+        });
       }
     }
-    renderAccounting();
+
+    async function loadAccounting() {
+      const res = await window.APPWRITE.databases.listDocuments(window.APPWRITE.DATABASE_ID, window.APPWRITE.ACCOUNTING);
+      accountingEntries = res.documents;
+      renderAccounting();
+      populateDateFilters();
+    }
+    loadAccounting();
 
     // Функция расчёта дохода для выбранного дня
     document.getElementById('calcIncomeDayBtn').addEventListener('click', function() {
@@ -704,7 +710,7 @@
 
   <!-- Функционал для Учёта аренды -->
   <script>
-    let rentalEntries = JSON.parse(localStorage.getItem('rentalEntries')) || [];
+    let rentalEntries = [];
     const rentalForm = document.getElementById('rentalForm');
     const rentalTableBody = document.querySelector('#rentalTable tbody');
 
@@ -724,11 +730,11 @@
         paid: document.getElementById('rentalPaid').checked,
         active: document.getElementById('rentalActive').checked
       };
-      rentalEntries.push(rental);
-      localStorage.setItem('rentalEntries', JSON.stringify(rentalEntries));
-      rentalForm.reset();
-      renderRental();
-      populateDateFilters();
+      databases.createDocument(DATABASE_ID, RENTALS, 'unique()', rental).then(() => {
+        rentalForm.reset();
+        loadRentals();
+        populateDateFilters();
+      });
     });
 
     function renderRental() {
@@ -759,26 +765,35 @@
     }
     function deleteRental(index) {
       if (confirm("Удалить запись?")) {
-        rentalEntries.splice(index, 1);
-        localStorage.setItem('rentalEntries', JSON.stringify(rentalEntries));
-        renderRental();
-        populateDateFilters();
+        const id = rentalEntries[index].$id;
+        databases.deleteDocument(DATABASE_ID, RENTALS, id).then(() => {
+          loadRentals();
+          populateDateFilters();
+        });
       }
     }
     // Обновление статуса "Оплачено" по клику на чекбокс
     function toggleRentalPaid(index, checkbox) {
-      rentalEntries[index].paid = checkbox.checked;
-      localStorage.setItem('rentalEntries', JSON.stringify(rentalEntries));
-      renderRental();
-      populateDateFilters();
+      const rental = rentalEntries[index];
+      databases.updateDocument(DATABASE_ID, RENTALS, rental.$id, {
+        ...rental,
+        paid: checkbox.checked
+      }).then(() => {
+        loadRentals();
+        populateDateFilters();
+      });
     }
-    renderRental();
-
+    async function loadRentals() {
+      const res = await databases.listDocuments(DATABASE_ID, RENTALS);
+      rentalEntries = res.documents;
+      renderRental();
+    }
+    loadRentals();
   </script>
 
   <!-- Функционал для Состава склада -->
   <script>
-    let stockItems = JSON.parse(localStorage.getItem('stockItems')) || [];
+    let stockItems = [];
     const stockForm = document.getElementById('stockForm');
     const stockTable = document.getElementById('stockTable');
     const searchInput = document.getElementById('searchInput');
@@ -791,11 +806,11 @@
         size: document.getElementById('itemSize').value,
         note: document.getElementById('itemNote').value
       };
-      stockItems.push(item);
-      localStorage.setItem('stockItems', JSON.stringify(stockItems));
-      stockForm.reset();
-      renderStock();
-      populateDateFilters();
+      databases.createDocument(DATABASE_ID, WAREHOUSE, 'unique()', item).then(() => {
+        stockForm.reset();
+        loadStock();
+        populateDateFilters();
+      });
     });
 
     // Логика индикаторов: 0 → красный, меньше 12 → оранжевый, от 12 и выше → зелёный
@@ -828,15 +843,22 @@
 
     function deleteStock(index) {
       if (confirm("Удалить запись?")) {
-        stockItems.splice(index, 1);
-        localStorage.setItem('stockItems', JSON.stringify(stockItems));
-        renderStock();
-        populateDateFilters();
+        const id = stockItems[index].$id;
+        databases.deleteDocument(DATABASE_ID, WAREHOUSE, id).then(() => {
+          loadStock();
+          populateDateFilters();
+        });
       }
     }
 
+    async function loadStock() {
+      const res = await databases.listDocuments(DATABASE_ID, WAREHOUSE);
+      stockItems = res.documents;
+      renderStock();
+    }
+
     searchInput.addEventListener('input', renderStock);
-    renderStock();
+    loadStock();
   </script>
 </body>
 </html>
