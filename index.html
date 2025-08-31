@@ -225,6 +225,26 @@
         font-size: 0.98rem;
       }
     }
+
+    
+    @media (max-width: 700px) {
+      .tabs {
+        flex-wrap: wrap;
+      }
+      .tabs button {
+        flex: 1 1 100%;
+        margin: 5px 0;
+        font-size: 15px;
+        padding: 12px;
+      }
+    }
+
+    .table-wrapper {
+      overflow-x: auto;
+    }
+    table {
+      min-width: 600px;
+    }
   </style>
 </head>
 <body>
@@ -291,21 +311,22 @@
         <p>Доход за год: <span id="incomeYearResult">0</span></p>
       </div>
 
-      <!-- Table with entries -->
-      <table>
-        <thead>
-          <tr>
-            <th>Тип</th>
-            <th>Доход/Расход</th>
-            <th>Дата</th>
-            <th>Название</th>
-            <th>Количество</th>
-            <th>Сумма</th>
-            <th>Удалить</th>
-          </tr>
-        </thead>
-        <tbody id="entryTable"></tbody>
-      </table>
+            <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Type</th>
+              <th>Flow</th>
+              <th>Date</th>
+              <th>Name</th>
+              <th>Quantity</th>
+              <th>Amount</th>
+              <th>Delete</th>
+            </tr>
+          </thead>
+          <tbody id="entryTable"></tbody>
+        </table>
+      </div>
     </div>
   </div>
 
@@ -354,24 +375,26 @@
         <button type="submit">Сохранить аренду</button>
       </form>
 
-      <table id="rentalTable">
-        <thead>
-          <tr>
-            <th>Имя</th>
-            <th>Фамилия</th>
-            <th>Телефон</th>
-            <th>Паспорт</th>
-            <th>Дата выдачи</th>
-            <th>Период</th>
-            <th>Сумма аренды</th>
-            <th>Дата оплаты</th>
-            <th>Оплачено</th>
-            <th>Активна</th>
-            <th>Удалить</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
+      <div class="table-wrapper">
+        <table id="rentalTable">
+          <thead>
+            <tr>
+              <th>First Name</th>
+              <th>Last Name</th>
+              <th>Phone</th>
+              <th>Passport</th>
+              <th>Date Given</th>
+              <th>Period</th>
+              <th>Rental Amount</th>
+              <th>Payment Date</th>
+              <th>Paid</th>
+              <th>Active</th>
+              <th>Delete</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
     </div>
   </div>
 
@@ -401,19 +424,21 @@
         <button type="submit">Добавить на склад</button>
       </form>
 
-      <table>
-        <thead>
-          <tr>
-            <th>Индикатор</th>
-            <th>Название</th>
-            <th>Количество</th>
-            <th>Размер</th>
-            <th>Доп. информация</th>
-            <th>Удалить</th>
-          </tr>
-        </thead>
-        <tbody id="stockTable"></tbody>
-      </table>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Indicator</th>
+              <th>Name</th>
+              <th>Quantity</th>
+              <th>Size</th>
+              <th>Additional Info</th>
+              <th>Delete</th>
+            </tr>
+          </thead>
+          <tbody id="stockTable"></tbody>
+        </table>
+      </div>
     </div>
       </div>
   
