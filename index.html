@@ -27,6 +27,10 @@
       background: #34495e;
       border-bottom: 4px solid #1abc9c;
       padding: 10px 0;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      flex-wrap: wrap;
     }
     .tabs button {
       padding: 15px 40px;
@@ -114,6 +118,15 @@
       border-radius: 12px;
       overflow: hidden;
       box-shadow: 0 2px 8px rgba(44,62,80,0.06);
+    }
+    .table-wrapper {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    @media (min-width: 700px) {
+      table {
+        min-width: 600px;
+      }
     }
     th, td {
       border: 1px solid #e0e6ed;
@@ -214,66 +227,61 @@
     }
     @media (max-width: 700px) {
       .container {
-        padding: 12px 4vw 18px 4vw;
+        padding: 8px 2vw 12px 2vw;
         min-width: unset;
       }
       .inline-group {
         flex-direction: column;
         gap: 0;
       }
-      table, th, td {
+      .tabs {
+        flex-direction: column;
+        padding: 0;
+      }
+      .tabs button {
+        width: 100%;
+        padding: 14px;
+        font-size: 1.07rem;
+        margin: 2px 0;
+      }
+      h1 {
+        font-size: 1.5rem;
+        padding: 12px;
+      }
+      label, input, select, button {
         font-size: 0.98rem;
       }
-        .tabs {
-          position: sticky;
-          top: 0;
-          z-index: 100;
-          flex-direction: column;
-          padding: 0;
-        }
-        .tabs button {
-          width: 100%;
-          padding: 18px 0;
-          font-size: 1.15rem;
-          margin: 2px 0;
-        }
-        h1 {
-          font-size: 1.5rem;
-          padding: 12px;
-        }
-        label, input, select, button {
-          font-size: 1.08rem;
-        }
-        .income-calc-block {
-          padding: 10px 4px 6px 4px;
-        }
-        .search-box {
-          margin: 10px 0 18px;
-        }
-        .checkbox-group {
-          flex-direction: column;
-          gap: 10px;
-        }
-        button, .delete-btn {
-          min-height: 48px;
-          font-size: 1.08rem;
-          padding: 12px 0;
-        }
-        th, td {
-          padding: 10px 4px;
-        }
-        .tab-content {
-          padding: 8px;
-        }
+      .income-calc-block {
+        padding: 8px 2px 4px 2px;
+      }
+      .search-box {
+        margin: 8px 0 12px;
+      }
+      .checkbox-group {
+        flex-direction: column;
+        gap: 8px;
+      }
+      button, .delete-btn {
+        min-height: 40px;
+        font-size: 0.98rem;
+        padding: 8px 0;
+      }
+      th, td {
+        padding: 6px 2px;
+        font-size: 0.93rem;
+      }
+      .tab-content {
+        padding: 6px;
+      }
     }
   </style>
 </head>
 <body>
   <h1>Система учёта</h1>
   <div class="tabs">
-  <button class="tab-btn active" onclick="switchTab('accounting')">Учёт</button>
-  <button class="tab-btn" onclick="switchTab('rental')">Аренда</button>
-  <button class="tab-btn" onclick="switchTab('warehouse')">Склад</button>
+    <button class="tab-btn active" data-tab="accounting">Учёт</button>
+    <button class="tab-btn" data-tab="rental">Аренда</button>
+    <button class="tab-btn" data-tab="warehouse">Склад</button>
   </div>
 
   <!-- Tab: Accounting -->
@@ -333,20 +341,22 @@
       </div>
 
       <!-- Table with entries -->
-      <table>
-        <thead>
-          <tr>
-            <th>Тип</th>
-            <th>Доход/Расход</th>
-            <th>Дата</th>
-            <th>Название</th>
-            <th>Количество</th>
-            <th>Сумма</th>
-            <th>Удалить</th>
-          </tr>
-        </thead>
-        <tbody id="entryTable"></tbody>
-      </table>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Тип</th>
+              <th>Доход/Расход</th>
+              <th>Дата</th>
+              <th>Название</th>
+              <th>Количество</th>
+              <th>Сумма</th>
+              <th>Удалить</th>
+            </tr>
+          </thead>
+          <tbody id="entryTable"></tbody>
+        </table>
+      </div>
     </div>
   </div>
 
@@ -395,24 +405,26 @@
         <button type="submit">Сохранить аренду</button>
       </form>
 
-      <table id="rentalTable">
-        <thead>
-          <tr>
-            <th>Имя</th>
-            <th>Фамилия</th>
-            <th>Телефон</th>
-            <th>Паспорт</th>
-            <th>Дата выдачи</th>
-            <th>Период</th>
-            <th>Сумма аренды</th>
-            <th>Дата оплаты</th>
-            <th>Оплачено</th>
-            <th>Активна</th>
-            <th>Удалить</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
+      <div class="table-wrapper">
+        <table id="rentalTable">
+          <thead>
+            <tr>
+              <th>Имя</th>
+              <th>Фамилия</th>
+              <th>Телефон</th>
+              <th>Паспорт</th>
+              <th>Дата выдачи</th>
+              <th>Период</th>
+              <th>Сумма аренды</th>
+              <th>Дата оплаты</th>
+              <th>Оплачено</th>
+              <th>Активна</th>
+              <th>Удалить</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
     </div>
   </div>
 
@@ -442,19 +454,21 @@
         <button type="submit">Добавить на склад</button>
       </form>
 
-      <table>
-        <thead>
-          <tr>
-            <th>Индикатор</th>
-            <th>Название</th>
-            <th>Количество</th>
-            <th>Размер</th>
-            <th>Доп. информация</th>
-            <th>Удалить</th>
-          </tr>
-        </thead>
-        <tbody id="stockTable"></tbody>
-      </table>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Индикатор</th>
+              <th>Название</th>
+              <th>Количество</th>
+              <th>Размер</th>
+              <th>Доп. информация</th>
+              <th>Удалить</th>
+            </tr>
+          </thead>
+          <tbody id="stockTable"></tbody>
+        </table>
+      </div>
     </div>
       </div>
   
@@ -462,12 +476,15 @@
   <script>
     const tabs = document.querySelectorAll('.tab-btn');
     const contents = document.querySelectorAll('.tab-content');
-    function switchTab(tabId) {
-      contents.forEach(c => c.classList.remove('active'));
-      tabs.forEach(t => t.classList.remove('active'));
-      document.getElementById(tabId).classList.add('active');
-      document.querySelector(`.tab-btn[onclick*="${tabId}"]`).classList.add('active');
-    }
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        const tabId = tab.getAttribute('data-tab');
+        contents.forEach(c => c.classList.remove('active'));
+        tabs.forEach(t => t.classList.remove('active'));
+        document.getElementById(tabId).classList.add('active');
+        tab.classList.add('active');
+      });
+    });
   </script>
 
   <!-- Функционал для Учёта доходов и расходов -->
